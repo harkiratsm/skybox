@@ -1,11 +1,13 @@
-import { pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DB_URL!,
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import * as dotenv from 'dotenv';
+dotenv.config({
+  path: '.env.local',
 });
 
-const db = drizzle(pool);
+const dbUrl = process.env.NEXT_PUBLIC_DATABASE_URL;
 
-export { db };
+const sql = neon(dbUrl!);
+export const db = drizzle(sql);
+
+export * from 'drizzle-orm';

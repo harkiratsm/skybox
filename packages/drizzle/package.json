@@ -10,7 +10,17 @@
         "clean": "rimraf node_modules"
     },
     "dependencies": {
+        "@auth/core": "^0.18.0",
+        "@auth/drizzle-adapter": "^1.4.2",
+        "@neondatabase/serverless": "^0.9.5",
+        "dotenv": "^16.4.5",
         "drizzle-orm": "^0.33.0",
-        "pg": "^8.12.0"
+        "drizzle-zod": "^0.5.1",
+        "next-auth": "^5.0.0-beta.20",
+        "pg": "^8.12.0",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "drizzle-kit": "^0.24.2"
     }
 }
