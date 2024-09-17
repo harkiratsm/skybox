@@ -31,28 +31,30 @@ export const Header = ({ user }: any) => {
                                 pathName.includes('/notes') ?
                                     <span className="text-xs "> Notes</span>
                                     : pathName === '/drive' ?
-                                        <span className="text-sm text-primary-light">Drive</span>
+                                        <span className="text-xs">Drive</span>
                                         : null   
 
                             }
                         </span>
                     </Link>
                     <div className="flex items-center space-x-4">
-                        <Button variant="ghost" size="sm">
+                        {/* <Button variant="ghost" size="sm">
                             <Plus className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar className="cursor-pointer">
+                                <Avatar className="cursor-pointer w-8 h-8">
                                     <AvatarImage src={user?.image} alt="profile pic" />
                                     <AvatarFallback>{user?.name[0]}</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                                <Link href="/settings">
                                 <DropdownMenuItem>
                                     <Settings className="mr-2 h-4 w-4" />
                                     <span>Settings</span>
                                 </DropdownMenuItem>
+                                </Link>
                                 <DropdownMenuItem onSelect={(e) => handleSignOut(e)}>
                                     <LogOut className="mr-2 h-4 w-4" />
                                     <span>Sign out</span>

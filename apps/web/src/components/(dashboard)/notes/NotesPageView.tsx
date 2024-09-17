@@ -11,8 +11,10 @@ import { trpc } from '@repo/trpc/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { useToast } from '@/hooks/use-toast'
+import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/notes'
+import { Skeleton } from '@/components/ui/skeleton'
 
-export default function NotesPageView({ folders, children }: { folders: any, children: React.ReactNode }) {
+export default function NotesPageView({ initialFolders, children }: { initialFolders: FolderSchema[], children: React.ReactNode }) {
   const router = useRouter()
   const params = useParams()
   const pathname = usePathname()
@@ -22,6 +24,8 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [isExpanded, setIsExpanded] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [folders, setFolders] = useState<FolderSchema[]>(initialFolders)
+  const [notes, setNotes] = useState<NotesSchema[]>([])
   const { toast } = useToast()
   
   const [isRenamingFolder, setIsRenamingFolder] = useState(false)
@@ -32,18 +36,17 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
   const [renamingNoteId, setRenamingNoteId] = useState<string | null>(null)
   const [renameNoteName, setRenameNoteName] = useState('')
 
-  const { data: notes, isLoading: isLoadingNotes, refetch: refetchNotes } = trpc.note.getNotes.useQuery(
+  const { data: updatedNotes , isLoading: isLoadingNotes, refetch: refetchNotes } = trpc.note.getNotes.useQuery(
     { folderId: selectedFolder || '' },
     { enabled: !!selectedFolder }
   )
+
 
   const { data: noteData } = trpc.note.getNotesByID.useQuery(
     { id: noteId },
     { enabled: !!noteId }
   )
 
-
-  // Existing mutations (createFolder, updateFolder, deleteFolder, createNote, updateNote, deleteNote) remain the same
   const { mutateAsync: deleteFolder } = trpc.folder.deleteFolder.useMutation({
     onSuccess: () => {
       toast({
@@ -97,6 +100,12 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
   });
 
   useEffect(() => {
+    if (updatedNotes) {
+      setNotes(updatedNotes)
+    }
+  }, [updatedNotes])
+
+  useEffect(() => {
     if (folders && folders.length > 0) {
       if (pathname.startsWith('/notes/folder/')) {
         setSelectedFolder(folderId)
@@ -118,6 +127,7 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
     try {
       const newFolder = await createFolder({ name: "New Folder" })
       if (newFolder && newFolder.length > 0) {
+        setFolders([...folders, newFolder[0]])
         router.push(`/notes/folder/${newFolder[0].id}`)
       }
     } catch (error) {
@@ -188,7 +198,7 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
         folderId: selectedFolder
       })
       if (note && note.length > 0) {
-        refetchNotes()
+        setNotes([...notes, note[0]])
         router.push(`/notes/note/${note[0].id}`)
         setSearchQuery('')
       }
@@ -219,10 +229,11 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
     if (renamingNoteId && renameNoteName.trim() && selectedFolder) {
       try {
         await updateNote({ id: renamingNoteId, title: renameNoteName, folderId: selectedFolder })
+        setNotes(notes.map(n => n.id === renamingNoteId ? { ...n, title: renameNoteName } : n))
         setRenamingNoteId(null)
         setRenameNoteName('')
         setIsRenamingNote(false)
-        refetchNotes()
+        
       } catch (error) {
         toast({
           description: 'Failed to update note',
@@ -239,7 +250,7 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
 
     try {
       await deleteNote({ id: noteId, folderId: selectedFolder })
-      refetchNotes()
+      setNotes(notes.filter(n => n.id !== noteId))
       if (noteId === params?.id) {
         router.push(`/notes/folder/${selectedFolder}`)
       }
@@ -258,9 +269,8 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
   ) || []
 
   return (
-    <div className="flex bg-background text-xs">
-      {/* Folder section */}
-      <div className="w-1/6 p-6 border-r border-t flex flex-col h-[calc(100vh-100px)]">
+    <div className="flex bg-background text-xs h-[calc(100vh-110px)]">
+      <div className="w-1/6 p-6 border-r border-t flex bg-zinc-50 flex-col">
         {isExpanded && (
           <>
             <ScrollArea className="flex-grow">
@@ -346,8 +356,14 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
               {isCreatingNote ? <ReloadIcon className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
             </Button>
           </div>
-          <ScrollArea className="h-[calc(100vh-200px)]">
-            {filteredNotes.map((note) => (
+          <ScrollArea>
+            {isLoadingNotes ? 
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+            </div>
+            : <>
+            {notes.map((note) => (
               <div key={note.id} className="flex items-center mb-1">
                 {renamingNoteId === note.id ? (
                   <div className="flex items-center w-full">
@@ -395,6 +411,8 @@ export default function NotesPageView({ folders, children }: { folders: any, chi
                 )}
               </div>
             ))}
+            </>
+            }
           </ScrollArea>
         </div>
         <div className="flex-1 p-6 w-full border-t">

@@ -4,15 +4,18 @@ import {
   pgTable,
   text,
   primaryKey,
-  integer
+  integer,
+  uniqueIndex,
+  boolean
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "@auth/core/adapters"
+import { genId } from "../utils";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
   
 export const users = pgTable('user', {
-  id: text('id').notNull().primaryKey(),
+  id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
@@ -49,6 +52,7 @@ export const sessions = pgTable("session", {
   expires: timestamp("expires", { mode: "date" }).notNull()
 })
 
+
 export const verificationTokens = pgTable(
   "verificationToken",
   {
@@ -60,3 +64,31 @@ export const verificationTokens = pgTable(
     compoundKey: primaryKey(vt.identifier, vt.token)
   })
 )
+
+export const Authenticator = pgTable(
+  'authenticator',
+  {
+    id: text('id')
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => genId('ath')),
+    credentialID: text('credentialId').notNull(),
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    providerAccountId: text('providerAccountId').notNull(),
+    credentialPublicKey: text('credentialPublicKey').notNull(),
+    counter: integer('counter').notNull(),
+    credentialDeviceType: text('credentialDeviceType').notNull(),
+    credentialBackedUp: boolean('credentialBackedUp').notNull(),
+    transports: text('transports'),
+  },
+  (authenticator) => ({
+    userIdIdx: uniqueIndex('Authenticator_credentialID_key').on(authenticator.credentialID),
+  }),
+)
+
+
+export const ZUserSchema = createSelectSchema(users);
+
+export type UserSchema = z.infer<typeof ZUserSchema>

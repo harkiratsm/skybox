@@ -5,10 +5,15 @@ import { Suspense } from "react";
 
 export default async function NotesLayout({children}: {children: React.ReactNode}) {
     const session = await auth(); 
-    const folders = await findFolders({ userId: session?.user?.id ?? "" });
+
+    if (!session) {
+        return null;
+    }
+
+    const initialFolders = await findFolders({ userId: session?.user?.id ?? "" });
     return (
         <Suspense fallback="Loading...">
-            <NotesPageView folders={folders} >
+            <NotesPageView initialFolders={initialFolders} >
              {children}
             </NotesPageView>
         </Suspense>

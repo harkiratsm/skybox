@@ -1,9 +1,12 @@
 import { jsonb, pgTable, text, timestamp} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './user';
+import { files } from './files';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const folders = pgTable('folders', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   userId: text('user_id').references(() => users.id).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -11,7 +14,7 @@ export const folders = pgTable('folders', {
 });
 
 export const notes = pgTable('notes', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   title: text('title').notNull(),
   content: text('content'),
   userId: text('user_id').references(() => users.id).notNull(),
@@ -20,10 +23,6 @@ export const notes = pgTable('notes', {
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
-export const userRelations = relations(users, ({ many }) => ({
-  folders: many(folders),
-  notes: many(notes)
-}));
 
 export const folderRelations = relations(folders, ({ many, one }) => ({
   notes: many(notes),
@@ -43,3 +42,15 @@ export const noteRelations = relations(notes, ({ one }) => ({
     references: [users.id]
   })
 }));
+
+// move to type.ts file - todo 
+
+export const ZNotesSchema = createSelectSchema(notes);
+
+export type NotesSchema = z.infer<typeof ZNotesSchema>
+
+
+export const ZFolderSchema = createSelectSchema(folders);
+
+export type FolderSchema = z.infer<typeof ZFolderSchema>
+

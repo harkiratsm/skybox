@@ -15,6 +15,48 @@
       "when": 1726405078275,
       "tag": "0001_swift_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726488944797,
+      "tag": "0002_lean_nightshade",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1726568181616,
+      "tag": "0003_warm_maddog",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1726570723754,
+      "tag": "0004_solid_luminals",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1726582181099,
+      "tag": "0005_famous_spyke",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1726582240300,
+      "tag": "0006_fancy_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1726582411388,
+      "tag": "0007_slippery_lady_mastermind",
+      "breakpoints": true
     }
   ]
 }
