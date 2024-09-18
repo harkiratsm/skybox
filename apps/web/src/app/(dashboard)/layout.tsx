@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { Header } from "@/components/(dashboard)/layout/header";
+import { UserSchema } from "@repo/drizzle/schema/user";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -9,16 +10,16 @@ type DashboardLayoutProps = {
 };
 
 
-export default async function DashboardLayout({children}: DashboardLayoutProps) {
+export default async function DashboardLayout({ children }: DashboardLayoutProps) {
     const session = await auth();
 
-    if (!session) {
+    if (!session || !session?.user) {
         redirect("/signin");
     }
 
     return (
         <>
-            <Header user={session?.user} />
+            <Header user={session?.user as UserSchema} />
             <main className="mt-4">{children}</main>
         </>
     );

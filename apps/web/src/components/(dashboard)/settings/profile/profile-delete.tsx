@@ -5,20 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { UserSchema } from "@repo/drizzle/schema/user";
 import { trpc } from "@repo/trpc/react";
 import { useRouter } from "next/navigation";
 
 export type DeleteAccountProps = {
     className?: string;
-    user: any;
+    user: UserSchema
 }
 
-export const DeleteAccount = ({className, user }:DeleteAccountProps) => {
+export const DeleteAccount = ({ className, user }: DeleteAccountProps) => {
 
     const router = useRouter();
-    const {toast} = useToast();
+    const { toast } = useToast();
 
-    const {mutateAsync: deleteAccount, isLoading: isDeleting} = trpc.userRouter.deleteAccount.useMutation();
+    const { mutateAsync: deleteAccount } = trpc.userRouter.deleteAccount.useMutation();
 
     const handleDeleteAccount = async () => {
         try {
@@ -43,12 +44,12 @@ export const DeleteAccount = ({className, user }:DeleteAccountProps) => {
 
 
     return (
-       <div className={className}>
+        <div className={className}>
             <div className="flex-shrink-0">
                 <Dialog>
-                   <DialogTrigger asChild>
-                     <Button variant="destructive">
-                        Delete Account
+                    <DialogTrigger asChild>
+                        <Button variant="destructive">
+                            Delete Account
                         </Button>
                     </DialogTrigger>
                     <DialogContent>

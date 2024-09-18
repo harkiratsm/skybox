@@ -1,21 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-this-alias */
 'use client';
-
 import { trpc } from "@repo/trpc/react";
-import Editor from "./Editor";
 import { CloudUpload } from "lucide-react";
+import Editor from "./Editor";
 
 const debounce = (func: (...args: any[]) => void, delay: number) => {
   let debounceTimer: ReturnType<typeof setTimeout>;
-  return function(this: any, ...args: any[]) {
-      const context = this;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(context, args), delay);
+  return function (this: any, ...args: any[]) {
+    const context = this;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => func.apply(context, args), delay);
   };
 };
 
-export default function NoteEditor({noteId}: {noteId: string}) {
-    const {data: note, isLoading} = trpc.note.getNotesByID.useQuery({id: noteId});
-    const { mutateAsync: updateNote, isLoading: isSaving } = trpc.note.updateNote.useMutation()
+export default function NoteEditor({ noteId }: { noteId: string }) {
+  const { data: note, isLoading } = trpc.note.getNotesByID.useQuery({ id: noteId });
+  const { mutateAsync: updateNote, isLoading: isSaving } = trpc.note.updateNote.useMutation()
 
   const handleEditorChange = async (content: string) => {
     if (note) {
@@ -46,7 +46,7 @@ export default function NoteEditor({noteId}: {noteId: string}) {
     <div className="relative">
       {isSaving && <span className="flex self-end"> <CloudUpload className="mr-2 text-primary" /> Saving </span>}
       <Editor onChange={debouncedHandleEditorChange} initialContent={note[0].content ?? ''} />
-      
+
     </div>
   )
 }

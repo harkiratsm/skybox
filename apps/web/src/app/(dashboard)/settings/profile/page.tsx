@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { SettingHeader } from "@/components/(dashboard)/settings/header";
 import { DeleteAccount } from "@/components/(dashboard)/settings/profile/profile-delete";
 import { ProfileForm } from "@/components/(dashboard)/settings/profile/profile-form";
+import { UserSchema } from "@repo/drizzle/schema/user";
 import type { Metadata } from "next";
 
 
@@ -16,10 +17,10 @@ export default async function ProfilePage() {
         <>
             <SettingHeader title="Profile" subtitle="Update your profile information." />
 
-            <ProfileForm className="mb-8 max-w-xl" user={session?.user} />
+            <ProfileForm className="mb-8 max-w-xl" user={session?.user as UserSchema} />
 
             <hr className="my-4 max-w-xl" />
-            <DeleteAccount className="max-w-xl" user={session?.user}/>
+            <DeleteAccount className="max-w-xl" user={session?.user as UserSchema}/>
         </>
     )
 

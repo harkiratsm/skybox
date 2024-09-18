@@ -1,18 +1,18 @@
 // File: components/NotesPageView.tsx
 
 'use client'
-import { useEffect, useState } from 'react'
-import { useRouter, useParams, usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Folder, Plus, FileIcon, MoreVertical, Check, X, PenTool, Trash2, PlusCircleIcon } from "lucide-react"
-import { trpc } from '@repo/trpc/react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ReloadIcon } from '@radix-ui/react-icons'
-import { useToast } from '@/hooks/use-toast'
-import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/notes'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useToast } from '@/hooks/use-toast'
+import { ReloadIcon } from '@radix-ui/react-icons'
+import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/notes'
+import { trpc } from '@repo/trpc/react'
+import { Check, FileIcon, Folder, MoreVertical, PenTool, Plus, PlusCircleIcon, Trash2, X } from "lucide-react"
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function NotesPageView({ initialFolders, children }: { initialFolders: FolderSchema[], children: React.ReactNode }) {
   const router = useRouter()
@@ -22,12 +22,11 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
   const noteId = params?.id as string
 
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
-  const [isExpanded, setIsExpanded] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [folders, setFolders] = useState<FolderSchema[]>(initialFolders)
   const [notes, setNotes] = useState<NotesSchema[]>([])
   const { toast } = useToast()
-  
+
   const [isRenamingFolder, setIsRenamingFolder] = useState(false)
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null)
   const [renameFolderName, setRenameFolderName] = useState('')
@@ -36,7 +35,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
   const [renamingNoteId, setRenamingNoteId] = useState<string | null>(null)
   const [renameNoteName, setRenameNoteName] = useState('')
 
-  const { data: updatedNotes , isLoading: isLoadingNotes, refetch: refetchNotes } = trpc.note.getNotes.useQuery(
+  const { data: updatedNotes, isLoading: isLoadingNotes } = trpc.note.getNotes.useQuery(
     { folderId: selectedFolder || '' },
     { enabled: !!selectedFolder }
   )
@@ -65,7 +64,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
     },
   });
 
-  const { mutateAsync: createFolder, isLoading: isCreatingFolder } = trpc.folder.createFolder.useMutation({
+  const { mutateAsync: createFolder } = trpc.folder.createFolder.useMutation({
     onSuccess: () => {
       toast({
         description: 'folder created successfully',
@@ -74,7 +73,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
     },
   });
 
-  const {mutateAsync: createNote, isLoading: isCreatingNote} = trpc.note.createNote.useMutation({
+  const { mutateAsync: createNote, isLoading: isCreatingNote } = trpc.note.createNote.useMutation({
     onSuccess: () => {
       toast({
         description: 'note created successfully',
@@ -84,7 +83,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
   })
 
   // New mutation for updating notes
-  const { mutateAsync: updateNote } = trpc.note.updateNote.useMutation({  
+  const { mutateAsync: updateNote } = trpc.note.updateNote.useMutation({
     onSuccess: () => {
 
     },
@@ -233,7 +232,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
         setRenamingNoteId(null)
         setRenameNoteName('')
         setIsRenamingNote(false)
-        
+
       } catch (error) {
         toast({
           description: 'Failed to update note',
@@ -264,91 +263,86 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
     }
   }
 
-  const filteredNotes = notes?.filter(note => 
-    note.title.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || []
+  // const filteredNotes = notes?.filter(note =>
+  //   note.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // ) || []
 
   return (
     <div className="flex bg-background text-xs h-[calc(100vh-110px)]">
       <div className="w-1/6 p-6 border-r border-t flex bg-zinc-50 flex-col">
-        {isExpanded && (
-          <>
-            <ScrollArea className="flex-grow">
-              <div className="flex flex-col w-full">
-                {folders?.map((folder: any) => (
-                  <div key={folder.id} className="flex items-center mb-2">
-                    {renamingFolderId === folder.id ? (
-                      <div className="flex items-center w-full">
-                        <Input
-                          value={renameFolderName}
-                          onChange={(e) => setRenameFolderName(e.target.value)}
-                          className='text-xs ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0'
-                          autoFocus
-                        />
-                        <Button onClick={handleRenameFolderConfirm} size="icon" variant="ghost">
-                          {isRenamingFolder ? <ReloadIcon className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                        </Button>
-                        <Button onClick={() => setRenamingFolderId(null)} size="icon" variant="ghost">
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <div
-                          className={`flex items-center w-full group justify-between px-2 py-2 rounded-xl cursor-pointer ${
-                            selectedFolder === folder.id ? 'bg-primary/10' : 'bg-background hover:bg-accent'
-                          }`}
-                          onClick={() => handleFolderClick(folder.id)}
-                        >
-                          <div className='flex items-center space-x-2'>
-                            <Folder className="h-4 w-4 text-primary" />
-                            <span className="font-normal text-xs">{folder.name}</span>
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger>
-                              <div className="cursor-pointer hidden group-hover:block">
-                                <MoreVertical className="h-4 w-4" />
-                              </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className='font-light text-xs'>
-                              <DropdownMenuItem onClick={() => handleRenameFolder(folder.id)}>
-                                <PenTool className="h-2 w-2 mr-2" />
-                                Rename
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteFolder(folder.id)}>
-                                <Trash2 className="h-2 w-2 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </>
-                    )}
+        <ScrollArea className="flex-grow">
+          <div className="flex flex-col w-full">
+            {folders?.map((folder: FolderSchema) => (
+              <div key={folder.id} className="flex items-center mb-2">
+                {renamingFolderId === folder.id ? (
+                  <div className="flex items-center w-full">
+                    <Input
+                      value={renameFolderName}
+                      onChange={(e) => setRenameFolderName(e.target.value)}
+                      className='text-xs ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0'
+                      autoFocus
+                    />
+                    <Button onClick={handleRenameFolderConfirm} size="icon" variant="ghost">
+                      {isRenamingFolder ? <ReloadIcon className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                    </Button>
+                    <Button onClick={() => setRenamingFolderId(null)} size="icon" variant="ghost">
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
-                ))}
+                ) : (
+                  <>
+                    <div
+                      className={`flex items-center w-full group justify-between px-2 py-2 rounded-xl cursor-pointer ${selectedFolder === folder.id ? 'bg-primary/10' : 'bg-background hover:bg-accent'
+                        }`}
+                      onClick={() => handleFolderClick(folder.id)}
+                    >
+                      <div className='flex items-center space-x-2'>
+                        <Folder className="h-4 w-4 text-primary" />
+                        <span className="font-normal text-xs">{folder.name}</span>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          <div className="cursor-pointer hidden group-hover:block">
+                            <MoreVertical className="h-4 w-4" />
+                          </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='font-light text-xs'>
+                          <DropdownMenuItem onClick={() => handleRenameFolder(folder.id)}>
+                            <PenTool className="h-2 w-2 mr-2" />
+                            Rename
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDeleteFolder(folder.id)}>
+                            <Trash2 className="h-2 w-2 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </>
+                )}
               </div>
-            </ScrollArea>
-            <div className="mt-4">
-              <Button
-                onClick={handleCreateFolder}
-                className="w-full justify-center space-x-2 border-primary"
-                variant="outline"
-              >
-                <PlusCircleIcon className="h-4 w-4 text-primary" />
-                <span className="text-primary">New Folder</span>
-              </Button>
-            </div>
-          </>
-        )}
+            ))}
+          </div>
+        </ScrollArea>
+        <div className="mt-4">
+          <Button
+            onClick={handleCreateFolder}
+            className="w-full justify-center space-x-2 border-primary"
+            variant="outline"
+          >
+            <PlusCircleIcon className="h-4 w-4 text-primary" />
+            <span className="text-primary">New Folder</span>
+          </Button>
+        </div>
       </div>
-      
+
       {/* Notes section */}
       <div className="flex-1 flex">
         <div className="w-1/5 p-6 border-r border-t">
           <div className="flex justify-between items-center mb-4">
-            <Input 
-              placeholder='Search notes... ' 
-              className='w-full mr-2' 
+            <Input
+              placeholder='Search notes... '
+              className='w-full mr-2'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -357,61 +351,61 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
             </Button>
           </div>
           <ScrollArea>
-            {isLoadingNotes ? 
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-            </div>
-            : <>
-            {notes.map((note) => (
-              <div key={note.id} className="flex items-center mb-1">
-                {renamingNoteId === note.id ? (
-                  <div className="flex items-center w-full">
-                    <Input
-                      value={renameNoteName}
-                      onChange={(e) => setRenameNoteName(e.target.value)}
-                      className='text-xs ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0'
-                      autoFocus
-                    />
-                    <Button onClick={handleRenameNoteConfirm} size="icon" variant="ghost">
-                      {isRenamingNote ? <ReloadIcon className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                    </Button>
-                    <Button onClick={() => setRenamingNoteId(null)} size="icon" variant="ghost">
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center w-full">
-                    <Button
-                      variant='ghost'
-                      className={`flex-grow justify-start px-2 space-x-2 rounded-xl ${noteId === note.id ? 'bg-primary/10' : ''}`}
-                      onClick={() => handleNoteClick(note.id)}
-                    >
-                      <FileIcon className="h-4 w-4 text-primary" />
-                      <span className="font-normal text-xs">{note.title}</span>
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <div className="cursor-pointer">
-                          <MoreVertical className="h-4 w-4" />
-                        </div>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className='font-light text-xs'>
-                        <DropdownMenuItem onClick={() => handleRenameNote(note.id)}>
-                          <PenTool className="h-2 w-2 mr-2" />
-                          Rename
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteNote(note.id)}>
-                          <Trash2 className="h-2 w-2 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                )}
+            {isLoadingNotes ?
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
               </div>
-            ))}
-            </>
+              : <>
+                {notes.map((note) => (
+                  <div key={note.id} className="flex items-center mb-1">
+                    {renamingNoteId === note.id ? (
+                      <div className="flex items-center w-full">
+                        <Input
+                          value={renameNoteName}
+                          onChange={(e) => setRenameNoteName(e.target.value)}
+                          className='text-xs ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0'
+                          autoFocus
+                        />
+                        <Button onClick={handleRenameNoteConfirm} size="icon" variant="ghost">
+                          {isRenamingNote ? <ReloadIcon className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                        </Button>
+                        <Button onClick={() => setRenamingNoteId(null)} size="icon" variant="ghost">
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center w-full">
+                        <Button
+                          variant='ghost'
+                          className={`flex-grow justify-start px-2 space-x-2 rounded-xl ${noteId === note.id ? 'bg-primary/10' : ''}`}
+                          onClick={() => handleNoteClick(note.id)}
+                        >
+                          <FileIcon className="h-4 w-4 text-primary" />
+                          <span className="font-normal text-xs">{note.title}</span>
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <div className="cursor-pointer">
+                              <MoreVertical className="h-4 w-4" />
+                            </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className='font-light text-xs'>
+                            <DropdownMenuItem onClick={() => handleRenameNote(note.id)}>
+                              <PenTool className="h-2 w-2 mr-2" />
+                              Rename
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDeleteNote(note.id)}>
+                              <Trash2 className="h-2 w-2 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </>
             }
           </ScrollArea>
         </div>

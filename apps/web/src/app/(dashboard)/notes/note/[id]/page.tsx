@@ -1,4 +1,3 @@
-import Editor from "@/components/(dashboard)/notes/Editor";
 import NoteEditor from "@/components/(dashboard)/notes/NoteEditor";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -9,7 +8,7 @@ export type NotesPageProps = {
     };
 };
 
-export default function NotesPage({params}: NotesPageProps) {
+export default function NotesPage({ params }: NotesPageProps) {
     const { id } = params;
 
     if (!id) {

@@ -16,7 +16,7 @@ import { z } from "zod";
   
 export const users = pgTable('user', {
   id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
-  name: text('name'),
+  name: text('name').notNull(),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image')
@@ -80,6 +80,7 @@ export const Authenticator = pgTable(
     credentialPublicKey: text('credentialPublicKey').notNull(),
     counter: integer('counter').notNull(),
     credentialDeviceType: text('credentialDeviceType').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
     credentialBackedUp: boolean('credentialBackedUp').notNull(),
     transports: text('transports'),
   },
@@ -88,7 +89,11 @@ export const Authenticator = pgTable(
   }),
 )
 
-
 export const ZUserSchema = createSelectSchema(users);
 
 export type UserSchema = z.infer<typeof ZUserSchema>
+
+
+export const ZAuthenticatorSchema = createSelectSchema(Authenticator);
+
+export type AuthenticatorSchema = z.infer<typeof ZAuthenticatorSchema>

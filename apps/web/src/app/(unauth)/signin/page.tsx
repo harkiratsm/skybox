@@ -1,6 +1,14 @@
+import { auth } from "@/auth";
 import { SignInForm } from "@/components/forms/signin";
+import { redirect } from "next/navigation";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+    const session = await auth()
+
+    if (session) {
+        redirect("/")
+    }
+
     return (
         <div className="w-screen px-4 max-w-lg">
             <div className="border-border z-10 rounded-xl border bg-neutral-100 p-6">

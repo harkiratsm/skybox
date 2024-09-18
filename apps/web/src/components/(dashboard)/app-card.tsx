@@ -3,9 +3,10 @@
 import { CloudIcon, FileTextIcon } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const AppCard = () => {
+  const router = useRouter()
   const apps = [
     { name: "Cloud Drive", icon: CloudIcon, link: "/drive" },
     { name: "Notes", icon: FileTextIcon, link: "/notes" },
@@ -24,7 +25,7 @@ export const AppCard = () => {
               <Button
                 key={app.name}
                 onClick={() => {
-                  // router.push(app.link)
+                  router.push(app.link)
                 }}
                 variant="outline"
                 className="h-24 flex flex-col items-center justify-center gap-2 hover:bg-primary/5 transition-colors"

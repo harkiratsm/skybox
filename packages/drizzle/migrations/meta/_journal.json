@@ -57,6 +57,62 @@
       "when": 1726582411388,
       "tag": "0007_slippery_lady_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1726626201989,
+      "tag": "0008_happy_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1726626273027,
+      "tag": "0009_mushy_thunderbolt_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1726626682437,
+      "tag": "0010_free_albert_cleary",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1726626993506,
+      "tag": "0011_goofy_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1726627163457,
+      "tag": "0012_normal_rogue",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1726627567418,
+      "tag": "0013_true_sentry",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1726628071440,
+      "tag": "0014_minor_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1726636573715,
+      "tag": "0015_same_riptide",
+      "breakpoints": true
     }
   ]
 }
