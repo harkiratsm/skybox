@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserSchema } from "@repo/drizzle/schema/user";
 import { trpc } from "@repo/trpc/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -26,6 +27,7 @@ export type ProfileSchema = z.infer<typeof ProfileSchemaO>;
 
 export const ProfileForm = ({ className, user }: ProfileFormProps) => {
     const { toast } = useToast();
+    const router = useRouter();
     const { mutateAsync: updateProfile, isLoading: isUpdating } = trpc.userRouter.updateProfile.useMutation({
         onSuccess: () => {
             toast({
@@ -47,6 +49,7 @@ export const ProfileForm = ({ className, user }: ProfileFormProps) => {
             await updateProfile({
                 name: values.name,
             });
+            router.refresh();
         } catch (error) {
             toast({
                 description: "Error updating profile",

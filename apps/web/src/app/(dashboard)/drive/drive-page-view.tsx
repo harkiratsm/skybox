@@ -9,6 +9,7 @@ import { trpc } from "@repo/trpc/react";
 import "@uploadthing/react/styles.css";
 import { format } from 'date-fns';
 import { Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export type DrivePageViewProps = {
@@ -17,6 +18,7 @@ export type DrivePageViewProps = {
 
 export const DrivePageView = ({ initialFiles }: DrivePageViewProps) => {
   const { toast } = useToast()
+  const router = useRouter()
 
 
   const [files, setFiles] = useState<FileSchema[]>(initialFiles)
@@ -53,6 +55,7 @@ export const DrivePageView = ({ initialFiles }: DrivePageViewProps) => {
           description: "File uploaded successfully",
           duration: 3000,
         })
+        router.refresh()
       } else {
         toast({
           description: "Failed to upload file, please try again",

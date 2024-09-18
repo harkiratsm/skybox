@@ -13,7 +13,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                 Settings 
             </h1>
             <div className="grid grid-cols-12 mt-4 gap-x-8 md:mt-8">
-                <SettingsNav className="hidden md:flex md:col-span-3" />
+                <SettingsNav className="flex md:col-span-3" />
                 <div className="col-span-12 md:col-span-9">{children}</div>
             </div>
         </div>

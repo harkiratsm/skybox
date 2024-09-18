@@ -17,6 +17,10 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
   const { data: note, isLoading } = trpc.note.getNotesByID.useQuery({ id: noteId });
   const { mutateAsync: updateNote, isLoading: isSaving } = trpc.note.updateNote.useMutation()
 
+  if (note?.length === 0) {
+    return <div>Note not found</div>
+  }
+
   const handleEditorChange = async (content: string) => {
     if (note) {
       try {

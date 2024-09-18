@@ -1,6 +1,7 @@
 // File: components/NotesPageView.tsx
 
 'use client'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from "@/components/ui/input"
@@ -10,7 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/notes'
 import { trpc } from '@repo/trpc/react'
-import { Check, FileIcon, Folder, MoreVertical, PenTool, Plus, PlusCircleIcon, Trash2, X } from "lucide-react"
+import { Check, FileIcon, Folder, MoreVertical, PenTool, Plus, PlusCircleIcon, RocketIcon, Trash2, X } from "lucide-react"
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -109,7 +110,6 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
       if (pathname.startsWith('/notes/folder/')) {
         setSelectedFolder(folderId)
       } else if (pathname.startsWith('/notes/note/')) {
-        console.log("harkirat", noteData)
         setSelectedFolder(noteData?.[0]?.folderId || folders[0].id)
       } else if (!selectedFolder) {
         setSelectedFolder(folders[0].id)
@@ -169,6 +169,8 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
   const handleDeleteFolder = async (folderId: string) => {
     try {
       await deleteFolder({ id: folderId })
+      setFolders(folders.filter(f => f.id !== folderId))
+      setNotes(notes.filter(n => n.folderId !== folderId))
       if (selectedFolder === folderId) {
         const remainingFolders = folders.filter(f => f.id !== folderId)
         if (remainingFolders.length > 0) {
@@ -272,6 +274,15 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
       <div className="w-1/6 p-6 border-r border-t flex bg-zinc-50 flex-col">
         <ScrollArea className="flex-grow">
           <div className="flex flex-col w-full">
+            {folders?.length === 0 && (
+              <Alert className="mt-2 max-w-md">
+                <RocketIcon className="h-4 w-4 text-primary" />
+                <AlertTitle className="text-primary">Heads up!</AlertTitle>
+                <AlertDescription className="text-muted-foreground">
+                  You don&apos;t have any folders yet. Create one <span className="text-primary cursor-pointer" onClick={handleCreateFolder}>here</span>
+                </AlertDescription>
+              </Alert>
+            )}
             {folders?.map((folder: FolderSchema) => (
               <div key={folder.id} className="flex items-center mb-2">
                 {renamingFolderId === folder.id ? (
