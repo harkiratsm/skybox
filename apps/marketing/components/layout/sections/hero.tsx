@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 const cardData = [
   {
     title: "Easily access your files, photos, and notes",
@@ -77,10 +78,14 @@ export const HeroSection = () => {
           </p>
 
           <div className="space-y-4 md:space-y-0 md:space-x-4">
+          <Link href="https://skybox-web.vercel.app/signin" target="_blank">
+
             <Button className="w-5/6 md:w-1/4 font-bold group/arrow">
               Get Started
               <ArrowRight className="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" />
             </Button>
+
+            </Link>
 
             {/* <Button
               asChild

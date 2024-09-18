@@ -1,5 +1,7 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./user";
+import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const files = pgTable('files', {
     id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -11,3 +13,7 @@ export const files = pgTable('files', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
+
+const TFileSchema = createSelectSchema(files);
+
+export type FileSchema = z.infer<typeof TFileSchema>;

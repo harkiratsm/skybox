@@ -14,7 +14,7 @@ export const Navbar = () => {
             <ServerCrash className="h-6 w-6 text-primary" />
             <span className="font-bold text-primary text-lg sm:text-xl">Skybox</span>
           </Link>
-            <Link href='/login' className="flex items-center">
+            <Link href='https://skybox-web.vercel.app/signin' target="_blank" className="flex items-center">
               <Button className="bg-primary text-white hover:bg-primary/90 transition-colors">
                 Login
               </Button>

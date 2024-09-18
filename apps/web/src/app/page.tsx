@@ -8,6 +8,7 @@ import { NotesCards } from "@/components/(dashboard)/note-card";
 import { ProfileCard } from "@/components/(dashboard)/profile-card";
 import { getAllNotes } from "@repo/lib/server-specific/all-notes";
 import { UserSchema } from "@repo/drizzle/schema/user";
+import { getAllFiles } from "@repo/lib/server-specific/get-all-files";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -16,9 +17,9 @@ export default async function Dashboard() {
     redirect("/signin");
   }
 
-
-  const notes = await getAllNotes({ userId: session?.user?.id ?? '' });
-  // const drive = await getAllDrive({ userId: session?.user?.id ?? '' });
+  const userId = session?.user?.id ?? '';
+  const notes = await getAllNotes({ userId });
+  const files = await getAllFiles(userId); 
   return (
     <>
       <Header user={session.user as UserSchema} />
@@ -28,7 +29,7 @@ export default async function Dashboard() {
           <NotesCards notes={notes} />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <DriveCard />
+          <DriveCard files={files} />
           <AppCard />
         </div>
       </div>

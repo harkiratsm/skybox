@@ -6,16 +6,15 @@ import signout from "@/lib/signout";
 import { UserSchema } from "@repo/drizzle/schema/user";
 import { LogOut, ServerCrash, Settings } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
-export const Header = ({ user }: {user: UserSchema}) => {
-    const router = useRouter();
+export const Header = ({ user }: { user: UserSchema }) => {
     const pathName = usePathname();
 
     const handleSignOut = async (e: Event) => {
         e.preventDefault();
         await signout();
-        router.push('/signin');
+        window.location.href = `${process.env.NEXT_PUBLIC_MARKETING_URL}`;
     }
 
 

@@ -16,7 +16,6 @@ export const SignInForm = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const onSignInWithGoogleClick = async () => {
-    setIsLoggingIn(true);
     try {
       await signIn('google', { callbackUrl: LOGIN_REDIRECT_PATH });
     } catch (err) {
