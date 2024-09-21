@@ -1,14 +1,12 @@
 import { auth } from "@/auth";
 import { Header } from "@/components/(dashboard)/layout/header";
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import { redirect } from "next/navigation";
 import React from "react";
-
 
 type DashboardLayoutProps = {
     children: React.ReactNode;
 };
-
 
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
     const session = await auth();

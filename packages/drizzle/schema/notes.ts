@@ -1,9 +1,7 @@
-import { jsonb, pgTable, text, timestamp} from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './user';
-import { files } from './files';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
+
 
 export const folders = pgTable('folders', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -43,14 +41,6 @@ export const noteRelations = relations(notes, ({ one }) => ({
   })
 }));
 
-// move to type.ts file - todo 
-
-export const ZNotesSchema = createSelectSchema(notes);
-
-export type NotesSchema = z.infer<typeof ZNotesSchema>
 
 
-export const ZFolderSchema = createSelectSchema(folders);
-
-export type FolderSchema = z.infer<typeof ZFolderSchema>
 

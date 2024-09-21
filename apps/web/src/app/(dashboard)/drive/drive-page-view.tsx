@@ -4,7 +4,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
-import { FileSchema } from "@repo/drizzle/schema/files";
+import { FileSchema } from "@repo/drizzle/schema/type";
 import { trpc } from "@repo/trpc/react";
 import "@uploadthing/react/styles.css";
 import { format } from 'date-fns';

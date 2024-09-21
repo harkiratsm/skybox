@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import { trpc } from "@repo/trpc/react";
 import { useRouter } from "next/navigation";
 

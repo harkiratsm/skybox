@@ -7,7 +7,7 @@ import { Header } from "@/components/(dashboard)/layout/header";
 import { NotesCards } from "@/components/(dashboard)/note-card";
 import { ProfileCard } from "@/components/(dashboard)/profile-card";
 import { getAllNotes } from "@repo/lib/server-specific/all-notes";
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import { getAllFiles } from "@repo/lib/server-specific/get-all-files";
 
 export default async function Dashboard() {
@@ -20,6 +20,7 @@ export default async function Dashboard() {
   const userId = session?.user?.id ?? '';
   const notes = await getAllNotes({ userId });
   const files = await getAllFiles(userId); 
+
   return (
     <>
       <Header user={session.user as UserSchema} />

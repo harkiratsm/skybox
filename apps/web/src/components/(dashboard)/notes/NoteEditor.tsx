@@ -1,56 +1,67 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars  */
+
 'use client';
+import { useState, useCallback, useEffect } from 'react';
 import { trpc } from "@repo/trpc/react";
 import { CloudUpload } from "lucide-react";
-import Editor from "./Editor";
+import dynamic from 'next/dynamic';
+import { NotesSchema } from "@repo/drizzle/schema/type";
 
-const debounce = (func: (...args: any[]) => void, delay: number) => {
-  let debounceTimer: ReturnType<typeof setTimeout>;
-  return function (this: any, ...args: any[]) {
-    const context = this;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => func.apply(context, args), delay);
+const Editor = dynamic(() => import('./Editor'), { ssr: false });
+
+// Move debounce to a separate utility file if used across multiple components
+const debounce = <T extends (...args: any[]) => any>(func: T, delay: number): ((...args: Parameters<T>) => void) => {
+  let timeoutId: NodeJS.Timeout | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 };
 
-export default function NoteEditor({ noteId }: { noteId: string }) {
-  const { data: note, isLoading } = trpc.note.getNotesByID.useQuery({ id: noteId });
-  const { mutateAsync: updateNote, isLoading: isSaving } = trpc.note.updateNote.useMutation()
+export default function NoteEditor({note}: {note: NotesSchema}) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [content, setContent] = useState(note?.content ?? '');
+  const { mutateAsync: updateNote } = trpc.note.updateNote.useMutation();
 
-  if (note?.length === 0) {
-    return <div>Note not found</div>
-  }
-
-  const handleEditorChange = async (content: string) => {
-    if (note) {
+  const handleEditorChange = useCallback(async (newContent: string) => {
+    if (note && newContent !== content) {
+      setIsSaving(true);
       try {
         await updateNote({
-          id: note[0].id,
-          title: note[0].title,
-          content: content,
-          folderId: note[0].folderId
-        })
+          id: note.id,
+          title: note.title,
+          content: newContent,
+          folderId: note.folderId
+        });
+        setContent(newContent);
       } catch (error) {
-        console.error('Failed to update note:', error)
+        console.error('Failed to update note:', error);
+      } finally {
+        setIsSaving(false);
       }
     }
-  }
+  }, [note, updateNote, content]);
 
-  const debouncedHandleEditorChange = debounce(handleEditorChange, 400);
+  const debouncedHandleEditorChange = useCallback(
+    debounce(handleEditorChange, 400),
+    [handleEditorChange]
+  );
 
-  if (isLoading) {
-    return <div>Loading note...</div>
-  }
+  useEffect(() => {
+    setContent(note?.content ?? '');
+  }, [note]);
 
-  if (!note) {
-    return <div>Note not found</div>
+  if (!note || note.id === '') {
+    return <div>Note not found</div>;
   }
 
   return (
     <div className="relative">
-      {isSaving && <span className="flex self-end"> <CloudUpload className="mr-2 text-primary" /> Saving </span>}
-      <Editor onChange={debouncedHandleEditorChange} initialContent={note[0].content ?? ''} />
-
+      <span className="flex self-end">
+        <CloudUpload className="mr-2 text-primary" />
+        {isSaving ? 'Saving...' : 'Saved'}
+      </span>
+      <Editor onChange={debouncedHandleEditorChange} initialContent={content} />
     </div>
-  )
+  );
 }

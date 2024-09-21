@@ -1,81 +1,134 @@
-# Turborepo starter
+# Skybox
 
-This is an official starter Turborepo.
+![skybox](https://socialify.git.ci/harkiratsm/skybox/image?font=Inter&name=1&owner=1&pattern=Circuit%20Board&theme=Light)
 
-## Using this example
+<p align="center">
+  <strong>All your files, photos, and notes in one place.</strong>
+  <br>
+  <a href="https://skybox-marketing.vercel.app/"><strong>Learn more »</strong></a>
+</p>
 
-Run the following command:
+## Table of Contents
+- [About Skybox](#about-skybox)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Project Structure](#project-structure)
+- [API Documentation](#api-documentation)
+  - [Authentication](#authentication)
+  - [Example API Request](#example-api-request)
+- [Contributing](#contributing)
+- [License](#license)
+
+## About Skybox
+
+Skybox is a comprehensive solution designed to keep all your files, photos, and notes organized in one place. With an intuitive interface and powerful features, Skybox makes it easy to manage your digital life efficiently and securely.
+
+## Features
+
+- Centralized storage for files, photos, and notes
+- Intuitive user interface for easy navigation
+- Powerful search functionality
+- Secure authentication using NextAuth.js
+- RESTful API for integration with other applications
+
+## Tech Stack
+
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Framework:** [Next.js](https://nextjs.org/)
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+- **API:** [tRPC](https://trpc.io/)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 14 or higher)
+- PostgreSQL (version 12 or higher)
+
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/harkiratsm/skybox.git
+   cd skybox
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the necessary variables. Refer to `.env.example` for the required variables.
+
+4. Set up the database:
+   Ensure PostgreSQL is running and create a new database. Update the database connection settings in the `.env` file.
+
+5. Run database migrations:
+   ```sh
+   npm run migrate
+   ```
+
+6. Start the development server:
+   ```sh
+   npm run dev
+   ```
+
+7. Open your browser and navigate to `http://localhost:3000`.
+
+## Project Structure
+
+This Turborepo includes the following packages and apps:
+
+- `marketing`: Landing page for Skybox
+- `web`: Main Skybox application
+- `@repo/ui`: Shared React component library
+- `@repo/api`: API layer for handling requests and responses
+- `@repo/drizzle`: ORM for database interactions
+- `@repo/trpc`: Type-safe remote procedure calls for client-server communication
+- `@repo/lib`: Shared utility functions and helpers
+- `@repo/tailwind-config`: Configuration for Tailwind CSS styling
+- `@repo/typescript-config`: Shared TypeScript configurations
+
+## API Documentation
+
+The Skybox API provides access to various functionalities of the application. For detailed information about the available endpoints, request/response formats, and example usage, please refer to our Swagger documentation:
+
+```
+http://localhost:3000/api/v1/openapi
+```
+
+### Authentication
+
+To access the API, you need to authenticate your requests using an API token. Follow these steps to obtain and use your API token:
+
+1. Navigate to `http://localhost:3000/settings/apitoken` in your browser.
+2. Click on the "Generate Token" button to create a new API token.
+3. Copy the generated token and store it securely.
+4. Include the token in your API requests using the `Authorization` header:
+   ```
+   Authorization: Bearer YOUR_API_TOKEN
+   ```
+
+### Example API Request
+
+Here's an example of how to make an authenticated API request using curl:
 
 ```sh
-npx create-turbo@latest
+curl --location 'YOUR_API_ENDPOINT' \
+--header 'Authorization: Bearer YOUR_API_TOKEN'
 ```
 
-## What's inside?
+## Contributing
 
-This Turborepo includes the following packages/apps:
+We welcome contributions to Skybox! Please read our contributing guidelines (link to CONTRIBUTING.md) for details on how to submit pull requests, report issues, and suggest improvements.
 
-### Apps and Packages
+## License
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Skybox is released under the [MIT License](LICENSE).

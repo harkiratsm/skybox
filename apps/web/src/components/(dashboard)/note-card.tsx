@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 
-import { NotesSchema } from "@repo/drizzle/schema/notes";
+import { NotesSchema } from "@repo/drizzle/schema/type";
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 export type NotesCardsProps = {

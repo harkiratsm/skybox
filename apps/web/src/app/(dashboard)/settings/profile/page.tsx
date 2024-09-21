@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { SettingHeader } from "@/components/(dashboard)/settings/header";
 import { DeleteAccount } from "@/components/(dashboard)/settings/profile/profile-delete";
 import { ProfileForm } from "@/components/(dashboard)/settings/profile/profile-form";
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import type { Metadata } from "next";
 
 
