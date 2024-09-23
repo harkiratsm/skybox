@@ -1,6 +1,6 @@
 {
     "extends": "@repo/typescript-config/react-library.json",
-    "include": ["."],
+    "include": [".", "../api/v1/openapi.ts"],
     "exclude": ["dist", "build", "node_modules"],
     "compilerOptions": {
       "strict": true,

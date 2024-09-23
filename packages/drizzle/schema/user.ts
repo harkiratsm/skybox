@@ -10,8 +10,7 @@ import {
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "@auth/core/adapters"
 import { genId } from "../utils";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+
 
   
 export const users = pgTable('user', {
@@ -89,11 +88,3 @@ export const Authenticator = pgTable(
   }),
 )
 
-export const ZUserSchema = createSelectSchema(users);
-
-export type UserSchema = z.infer<typeof ZUserSchema>
-
-
-export const ZAuthenticatorSchema = createSelectSchema(Authenticator);
-
-export type AuthenticatorSchema = z.infer<typeof ZAuthenticatorSchema>

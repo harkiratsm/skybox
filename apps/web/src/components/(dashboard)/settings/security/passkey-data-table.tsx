@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {AuthenticatorSchema} from '@repo/drizzle/schema/user';
+import {AuthenticatorSchema} from '@repo/drizzle/schema/type';
 import { format } from 'date-fns';
 
 export type PasskeyDataTableProps = {

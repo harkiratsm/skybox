@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import { trpc } from "@repo/trpc/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

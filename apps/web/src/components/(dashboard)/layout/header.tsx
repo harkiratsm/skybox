@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import signout from "@/lib/signout";
-import { UserSchema } from "@repo/drizzle/schema/user";
+import { UserSchema } from "@repo/drizzle/schema/type";
 import { LogOut, ServerCrash, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
@@ -42,10 +42,10 @@ export const Header = ({ user }: { user: UserSchema }) => {
                         </Button> */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar className="cursor-pointer w-8 h-8">
-                                    <AvatarImage src={user?.image || ''} alt="profile pic" />
-                                    <AvatarFallback>{user?.name[0]}</AvatarFallback>
-                                </Avatar>
+                                    <Avatar className="cursor-pointer w-8 h-8">
+                                        <AvatarImage src={user?.image || ''} alt="profile pic" />
+                                        <AvatarFallback>{user?.name[0]}</AvatarFallback>
+                                    </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <Link href="/settings">

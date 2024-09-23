@@ -1,6 +1,5 @@
 "use client";
 
-
 import type { BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import {  useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/core/fonts/inter.css";
@@ -24,6 +23,10 @@ const Editor: React.FC<EditorProps> = ({
       ? (JSON.parse(initialContent) as PartialBlock[])
       : undefined,
   });
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <div className="my-4">

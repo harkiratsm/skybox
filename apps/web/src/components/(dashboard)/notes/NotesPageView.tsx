@@ -9,11 +9,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 import { ReloadIcon } from '@radix-ui/react-icons'
-import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/notes'
+import { FolderSchema, NotesSchema } from '@repo/drizzle/schema/type'
 import { trpc } from '@repo/trpc/react'
 import { Check, FileIcon, Folder, MoreVertical, PenTool, Plus, PlusCircleIcon, RocketIcon, Trash2, X } from "lucide-react"
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function NotesPageView({ initialFolders, children }: { initialFolders: FolderSchema[], children: React.ReactNode }) {
   const router = useRouter()
@@ -83,7 +83,6 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
     },
   })
 
-  // New mutation for updating notes
   const { mutateAsync: updateNote } = trpc.note.updateNote.useMutation({
     onSuccess: () => {
 
@@ -110,7 +109,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
       if (pathname.startsWith('/notes/folder/')) {
         setSelectedFolder(folderId)
       } else if (pathname.startsWith('/notes/note/')) {
-        setSelectedFolder(noteData?.[0]?.folderId || folders[0].id)
+        setSelectedFolder(noteData?.folderId || folders[0].id)
       } else if (!selectedFolder) {
         setSelectedFolder(folders[0].id)
       }
@@ -125,9 +124,9 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
   const handleCreateFolder = async () => {
     try {
       const newFolder = await createFolder({ name: "New Folder" })
-      if (newFolder && newFolder.length > 0) {
-        setFolders([...folders, newFolder[0]])
-        router.push(`/notes/folder/${newFolder[0].id}`)
+      if (newFolder && newFolder.id !== '') {
+        setFolders([...folders, newFolder])
+        router.push(`/notes/folder/${newFolder.id}`)
       }
     } catch (error) {
       toast({
@@ -215,6 +214,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
 
   const handleNoteClick = (noteId: string) => {
     router.push(`/notes/note/${noteId}`)
+    router.refresh()
   }
 
   const handleRenameNote = (noteId: string) => {
@@ -264,10 +264,10 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
       console.error('Failed to delete note:', error)
     }
   }
-
-  // const filteredNotes = notes?.filter(note =>
-  //   note.title.toLowerCase().includes(searchQuery.toLowerCase())
-  // ) || []
+  
+  const filteredNotes = useMemo(() => {
+    return notes.filter((note) => note.title.toLowerCase().startsWith(searchQuery.toLowerCase()))
+  }, [notes, searchQuery])
 
   return (
     <div className="flex bg-background text-xs h-[calc(100vh-110px)]">
@@ -368,7 +368,7 @@ export default function NotesPageView({ initialFolders, children }: { initialFol
                 <Skeleton className="h-6 w-full" />
               </div>
               : <>
-                {notes.map((note) => (
+                {filteredNotes.map((note) => (
                   <div key={note.id} className="flex items-center mb-1">
                     {renamingNoteId === note.id ? (
                       <div className="flex items-center w-full">

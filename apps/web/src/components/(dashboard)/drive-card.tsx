@@ -1,6 +1,6 @@
 'use client';
 
-import { FileSchema } from "@repo/drizzle/schema/files";
+import { FileSchema } from "@repo/drizzle/schema/type";
 import { BirdIcon, CloudUpload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
